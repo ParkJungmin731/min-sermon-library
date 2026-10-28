@@ -9,7 +9,7 @@ const SYSTEM = '당신은 한국어 설교 초안 작성 보조자다. 성경 �
 const schema = { type: 'object', additionalProperties: false, required: ['title', 'message', 'points', 'application', 'review'], properties: {
   title: { type: 'string' }, message: { type: 'string' }, points: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['heading', 'body'], properties: { heading: { type: 'string' }, body: { type: 'string' } } } }, application: { type: 'string' }, review: { type: 'array', items: { type: 'string' } }
 } };
-const staticFiles = { 'index.html': 'text/html; charset=utf-8', 'styles.css': 'text/css; charset=utf-8', 'app.js': 'text/javascript; charset=utf-8', 'data.js': 'text/javascript; charset=utf-8' };
+const staticFiles = { 'research.js': 'text/javascript; charset=utf-8', 'research-ui.js': 'text/javascript; charset=utf-8', 'index.html': 'text/html; charset=utf-8', 'styles.css': 'text/css; charset=utf-8', 'app.js': 'text/javascript; charset=utf-8', 'data.js': 'text/javascript; charset=utf-8' };
 const equal = (a, b) => { const x = Buffer.from(a), y = Buffer.from(b); return x.length === y.length && timingSafeEqual(x, y); };
 async function readBody(req, limit) { let size = 0, parts = []; for await (const p of req) { size += p.length; if (size > limit) throw Object.assign(new Error('입력 크기가 너무 큽니다.'), { status: 413 }); parts.push(p); } return Buffer.concat(parts).toString('utf8'); }
 export function validateInput(value) {
