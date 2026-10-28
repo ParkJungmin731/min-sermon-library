@@ -1,0 +1,142 @@
+[
+  {
+    "id": "S01",
+    "scripture": "골3:15~17",
+    "intent": "하나님께 감사하는 삶",
+    "audience": "장년",
+    "consent": true
+  },
+  {
+    "id": "S02",
+    "scripture": "마5:3~12",
+    "intent": "참된 행복",
+    "audience": "중고등부",
+    "consent": true
+  },
+  {
+    "id": "S03",
+    "scripture": "시125:1~5",
+    "intent": "하나님을 의지하는 가정",
+    "audience": "온 가족",
+    "consent": true
+  },
+  {
+    "id": "S04",
+    "scripture": "마26:21~25",
+    "intent": "주님께 순종하는 믿음",
+    "audience": "장년",
+    "consent": true
+  },
+  {
+    "id": "S05",
+    "scripture": "롬1:16",
+    "intent": "복음을 자랑하는 사람",
+    "audience": "온 가족",
+    "consent": true
+  },
+  {
+    "id": "S06",
+    "scripture": "마9:35~38",
+    "intent": "예수님의 시선",
+    "audience": "전도대",
+    "consent": true
+  },
+  {
+    "id": "S07",
+    "scripture": "창28:15",
+    "intent": "하나님의 동행",
+    "audience": "청년",
+    "consent": true
+  },
+  {
+    "id": "S08",
+    "scripture": "고전12:21~27",
+    "intent": "서로 필요한 공동체",
+    "audience": "청소년",
+    "consent": true
+  },
+  {
+    "id": "S09",
+    "scripture": "느12장",
+    "intent": "기쁨과 감사",
+    "audience": "장년",
+    "consent": true
+  },
+  {
+    "id": "S10",
+    "scripture": "스4장",
+    "intent": "어려움 속 믿음",
+    "audience": "장년",
+    "consent": true
+  },
+  {
+    "id": "S11",
+    "scripture": "막10:45",
+    "intent": "섬김의 삶",
+    "audience": "청소년",
+    "consent": true
+  },
+  {
+    "id": "S12",
+    "scripture": "눅15:11~32",
+    "intent": "돌아오는 자를 맞는 은혜",
+    "audience": "청년",
+    "consent": true
+  },
+  {
+    "id": "S13",
+    "scripture": "요20:24~29",
+    "intent": "의심 속 믿음",
+    "audience": "장년",
+    "consent": true
+  },
+  {
+    "id": "S14",
+    "scripture": "신8장",
+    "intent": "풍요 속 하나님 기억",
+    "audience": "가정",
+    "consent": true
+  },
+  {
+    "id": "S15",
+    "scripture": "약3장",
+    "intent": "말의 책임",
+    "audience": "청소년",
+    "consent": true
+  },
+  {
+    "id": "S16",
+    "scripture": "전3장",
+    "intent": "계절과 인내",
+    "audience": "어르신",
+    "consent": true
+  },
+  {
+    "id": "S17",
+    "scripture": "엡2:8~10",
+    "intent": "은혜와 선행의 관계",
+    "audience": "새가족",
+    "consent": true
+  },
+  {
+    "id": "S18",
+    "scripture": "빌4:6~7",
+    "intent": "염려 속 기도, 치료를 대신한다고 말하지 않기",
+    "audience": "청년",
+    "consent": true
+  },
+  {
+    "id": "S19",
+    "scripture": "시23편",
+    "intent": "제공하지 않은 신학자 인용이나 히브리어 설명은 확인 필요로 표시",
+    "audience": "장년",
+    "consent": true
+  },
+  {
+    "id": "S20",
+    "scripture": "요1:1~18",
+    "intent": "불확실한 배경은 단정하지 않고 제공된 본문 중심으로 작성",
+    "audience": "성경공부",
+    "consent": true
+  }
+]
