@@ -1,6 +1,6 @@
 {
   "name": "min-sermon-library",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "private": true,
   "type": "module",
   "engines": {
@@ -9,7 +9,8 @@
   "scripts": {
     "start": "node server.mjs",
     "test": "node --test tests/*.test.mjs",
-    "test:browser": "node tests/browser.mjs"
+    "test:browser": "node tests/browser.mjs",
+    "test:research-browser": "node tests/research-browser.mjs"
   },
   "devDependencies": {
     "fake-indexeddb": "6.2.4",

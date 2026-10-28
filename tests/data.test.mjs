@@ -38,3 +38,20 @@ test('document write failure rolls back added sermons too', async () => {
   finally { IDBObjectStore.prototype.add = originalAdd; }
   const after = await makeBackup(); assert.deepEqual(after.sermons, before.sermons); assert.deepEqual(after.documents, before.documents);
 });
+test('research and attachments survive add-only restore and conflicts are rejected',async()=>{
+ const {blankResearch}=await import('../research.js');const {saveResearch,saveDocument,documentsFor}=await import('../data.js');
+ const id=await saveSermon({title:'연구 설교',body:'기존 설교 원고'});const r=blankResearch();r.fields.overview='연구 요약';
+ const stored=await saveResearch(id,r,0);assert.equal(stored.revision,1);await assert.rejects(saveResearch(id,r,0),/다른 탭/);
+ await saveDocument({sermonId:id,title:'연구보고서',text:'원문 텍스트',imported:{fields:{overview:'추출 요약'},sources:[]}});
+ await saveDocument({sermonId:id,title:'PDF 가이드',attachment:{filename:'guide.pdf',mime:'application/pdf',data:'data:application/pdf;base64,JVBERi0xLjQ='}});
+ // A stale manuscript editor may not erase newer research.
+ await saveSermon({id,title:'연구 설교',body:'수정된 설교 원고'});assert.equal((await getSermon(id)).research.fields.overview,'연구 요약');
+ const all=await makeBackup(),subset={...all,sermons:all.sermons.filter(s=>s.id===id),documents:all.documents.filter(d=>d.sermonId===id)};
+ await restoreBackup(subset);const restored=(await allSermons()).filter(s=>s.title==='연구 설교').sort((a,b)=>b.id-a.id)[0];assert.notEqual(restored.id,id);assert.equal(restored.research.fields.overview,'연구 요약');assert.equal((await documentsFor(restored.id)).length,2);assert.equal(restored.body,'수정된 설교 원고');
+});
+test('removing an attachment is scoped to its sermon and preserves manuscript and research',async()=>{
+ const {deleteDocument,documentsFor,saveDocument}=await import('../data.js');
+ const s=(await allSermons()).find(s=>s.research);const id=await saveDocument({sermonId:s.id,title:'삭제 테스트',text:'개인 자료'});
+ await assert.rejects(deleteDocument(id,s.id+9999));assert((await documentsFor(s.id)).some(d=>d.id===id));
+ await deleteDocument(id,s.id);assert(!(await documentsFor(s.id)).some(d=>d.id===id));assert.deepEqual((await getSermon(s.id)).research,s.research);
+});

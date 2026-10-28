@@ -1,5 +1,7 @@
+import { mountResearch } from './research-ui.js';
 import { allSermons, getSermon, saveSermon, makeBackup, restoreBackup, validateBackup, matches, newest, STATUS } from './data.js';
 const main = document.querySelector('main'), notice = document.querySelector('#notice');
+let researchDispose;
 let page = '', routeVersion = 0, dirty = false, saving = false, generating = false;
 let aiInput = { scripture: '', intent: '', audience: '장년', consent: false }, aiResult = null, pendingBackup = null;
 const h = (tag, text, cls) => { const e = document.createElement(tag); if (text !== undefined) e.textContent = text; if (cls) e.className = cls; return e; };
@@ -21,16 +23,25 @@ function allowedToLeave() {
 }
 async function navigate(target, id) {
   if (!allowedToLeave()) return;
+  researchDispose?.(); researchDispose = undefined;
   dirty = false; page = target; const version = ++routeVersion;
   document.querySelectorAll('[data-page]').forEach(b => { if (b.dataset.page === target || target === 'editor' && b.dataset.page === 'library') b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current'); });
   main.replaceChildren(h('p', '자료를 불러오는 중입니다…', 'subtle'));
   try {
-    if (target === 'editor') await editor(id, version);
+    if (target === 'research' && id) {
+      const sermon = await getSermon(id); if (version !== routeVersion) return;
+      if (!sermon) throw new Error('설교를 먼저 저장해 주세요.');
+      const holder = h('div');
+      const dispose = await mountResearch({ root:holder, sermon, onDirty:v=>{dirty=v;}, onBusy:v=>{saving=v;}, onMessage:message, onError:error, onExit:id=>navigate('editor',id) });
+      if (version !== routeVersion) {dispose();return;}
+      researchDispose=dispose;main.replaceChildren(holder);
+    }
+    else if (target === 'editor') await editor(id, version);
     else if (target === 'generator') await generator(version);
     else if (target === 'settings') settings();
     else {
       const sermons = await allSermons(); if (version !== routeVersion) return;
-      if (target === 'library') library(sermons); else dashboard(sermons);
+      if (target === 'library') library(sermons); else if(target === 'research') researchHome(sermons); else dashboard(sermons);
     }
     if (version === routeVersion) main.focus({ preventScroll: true });
   } catch (err) { if (version === routeVersion) { main.replaceChildren(h('h1', '서재를 열지 못했습니다'), h('p', '저장 공간 권한을 확인해 주세요. 기존 자료는 삭제하지 않았습니다.'), button('다시 시도', () => navigate(target, id))); error(err); } }
@@ -46,9 +57,17 @@ function cards(rows, parent, emptyText = '아직 저장된 설교가 없습니�
       if (s.deletedAt) { const value = await getSermon(s.id); if (!value) throw new Error('자료를 찾지 못했습니다.'); delete value.deletedAt; value.updatedAt = new Date().toISOString(); await saveSermon(value); await navigate('library'); message('휴지통에서 복구했습니다.'); }
       else await navigate('editor', s.id);
     }));
+    if(!s.deletedAt) row.append(button('본문 연구',()=>navigate('research',s.id)));
     card.append(row); grid.append(card);
   }
   parent.append(grid);
+}
+function researchHome(rows) {
+  const intro=h('section',undefined,'panel');
+  intro.append(h('h2','연구를 설교에 연결하기'),h('p','설교를 선택해 본문 관찰 → 문학·원어·역사 연구 → 해석 비교 → 검수 → 별도 적용 → 연구 결과 인계 순서로 기록합니다.'),h('p','기존 설교에서 본문 연구를 누르거나 새 설교를 먼저 저장하세요. 출처 등록은 자료의 직접 열람이나 검증을 뜻하지 않습니다.','help'));
+  const guide=h('details');guide.append(h('summary','추가로 준비할 자료와 작업'),h('p','연구 대상 Book Profile, 성경 원문·번역 대조, 직접 열람할 주석, 필요한 원어 사전·역사 자료를 준비하세요. 가이드에서 언급한 Runtime·필터·외부 검색 시스템은 이 앱에 연결된 상태가 아닙니다. 연구실의 보완 목록에서 미확인 출처·전문 확인·검수 작업을 관리합니다.','subtle'));intro.append(guide);
+  const list=h('section');cards(rows.filter(s=>!s.deletedAt).sort(newest),list,'연구를 연결할 설교가 없습니다. 새 설교를 작성하고 저장해 주세요.');
+  main.replaceChildren(heading('성경 본문 연구','근거를 기록하고, 미확인 사항을 남기는 개인 연구실'),intro,list);
 }
 function dashboard(rows) {
   rows = rows.filter(s => !s.deletedAt); const stats = h('div', undefined, 'stats');
@@ -91,6 +110,7 @@ async function editor(id, version) {
   const save = h('button', '저장하기', 'primary'); save.type = 'submit';
   const saveStatus = h('span', id ? '저장된 설교' : '새 설교 · 아직 저장되지 않았습니다', 'save-status'); saveStatus.setAttribute('role', 'status');
   const actions = h('div', undefined, 'row'); actions.append(save, button('목록으로', () => navigate('library')));
+  actions.append(button('본문 연구실',()=>{if(!value.id)throw new Error('설교를 먼저 저장한 뒤 연구실을 열어 주세요.');return navigate('research',value.id);}));
   if (id) actions.append(button('휴지통으로', async () => {
     if (!confirm('이 설교를 휴지통으로 옮길까요? 휴지통에서 복구할 수 있습니다. 저장하지 않은 변경은 반영되지 않습니다.')) return;
     const original = await getSermon(id); if (!original) throw new Error('설교를 찾지 못했습니다.');
